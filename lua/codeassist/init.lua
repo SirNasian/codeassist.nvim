@@ -11,6 +11,7 @@ local code_assist = function(opts, callback)
 		vim.fn.jobstart({
 			python,
 			vim.fs.joinpath(root_path, "python", "script.py"),
+			opts.mode,
 			vim.bo.filetype,
 			query,
 			context,
@@ -22,6 +23,7 @@ local code_assist = function(opts, callback)
 end
 
 local code_assist_ask = function(opts)
+	opts.mode = "ask"
 	code_assist(opts, function(_, data)
 		if data then
 			print(table.concat(data, "\n"))
@@ -30,6 +32,7 @@ local code_assist_ask = function(opts)
 end
 
 local code_assist_replace = function(opts)
+	opts.mode = "replace"
 	code_assist(opts, function(_, data)
 		if data then
 			vim.api.nvim_buf_set_lines(0, opts.line1-1, opts.line2, false, data)
@@ -42,7 +45,6 @@ M.setup = function(opts)
 	opts = opts or {}
 
 	vim.system({ "python", "-m", "venv", venv_path })
-
 	vim.system({ pip, "install", "-r", vim.fs.joinpath(root_path, "python", "requirements.txt") })
 
 	vim.api.nvim_create_user_command("CodeAssist", code_assist_ask, { range = true, desc = "" })
