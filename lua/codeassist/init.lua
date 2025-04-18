@@ -40,7 +40,11 @@ local code_assist_replace = function(opts)
 	opts.mode = "replace"
 	code_assist(opts, function(_, response)
 		if (response) then
-			vim.api.nvim_buf_set_lines(0, opts.line1-1, opts.line2, false, response)
+			vim.api.nvim_buf_set_lines(0, opts.line1-1, opts.line2, false, vim.tbl_filter(
+				function(line)
+					return line:match("%S")
+				end,
+			response))
 		end
 	end)
 end
