@@ -8,10 +8,20 @@ local pip = vim.fs.joinpath(venv_path, "bin", "pip")
 local provider = "ollama"
 local model = "llama3.2:1b"
 
+local notify = function(message)
+	local has_noice, noice = pcall(require, "noice")
+	if (has_noice) then
+		noice.notify(message, { title = "CodeAssist" })
+	else
+		vim.notify("CodeAssist: " .. message)
+	end
+end
+
 local code_assist = function(opts, callback)
 	local context = table.concat(vim.api.nvim_buf_get_lines(0, opts.line1-1, opts.line2, false), "\n")
 	vim.ui.input({ prompt = "Query: " }, function(query)
 		if (query) then
+			notify("Thinking...")
 			vim.fn.jobstart({
 				python,
 				vim.fs.joinpath(root_path, "python", "script.py"),
@@ -23,7 +33,10 @@ local code_assist = function(opts, callback)
 				context,
 			}, {
 				stdout_buffered = true,
-				on_stdout = callback,
+				on_stdout = function(_, data)
+					notify("Done!")
+					callback(_, data)
+				end,
 			})
 		end
 	end)
