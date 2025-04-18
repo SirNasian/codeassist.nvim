@@ -11,19 +11,21 @@ local model = "llama3.2:1b"
 local code_assist = function(opts, callback)
 	local context = table.concat(vim.api.nvim_buf_get_lines(0, opts.line1-1, opts.line2, false), "\n")
 	vim.ui.input({ prompt = "Query: " }, function(query)
-		vim.fn.jobstart({
-			python,
-			vim.fs.joinpath(root_path, "python", "script.py"),
-			provider,
-			model,
-			opts.mode,
-			vim.bo.filetype,
-			query,
-			context,
-		}, {
-			stdout_buffered = true,
-			on_stdout = callback,
-		})
+		if (query) then
+			vim.fn.jobstart({
+				python,
+				vim.fs.joinpath(root_path, "python", "script.py"),
+				provider,
+				model,
+				opts.mode,
+				vim.bo.filetype,
+				query,
+				context,
+			}, {
+				stdout_buffered = true,
+				on_stdout = callback,
+			})
+		end
 	end)
 end
 
