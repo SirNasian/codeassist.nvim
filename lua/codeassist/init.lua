@@ -33,7 +33,16 @@ local code_assist_ask = function(opts)
 	opts.mode = "ask"
 	code_assist(opts, function(_, response)
 		if (response) then
-			print(table.concat(response, "\n"))
+			local buf = vim.api.nvim_create_buf(false, true)
+			vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.tbl_filter(
+				function(line)
+					return line:match("%S")
+				end,
+			response))
+			vim.bo[buf].modifiable = false;
+			vim.bo[buf].readonly = true;
+			vim.cmd((opts.mods or "") .. " split")
+			vim.api.nvim_set_current_buf(buf)
 		end
 	end)
 end
