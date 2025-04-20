@@ -109,6 +109,7 @@ M.setup = function(opts)
 		model = opts["model"]
 	end
 
+	vim.fn.mkdir(venv_path, "p")
 	vim.system({ "python", "-m", "venv", venv_path })
 	vim.system({ pip, "install", "langchain", provider_map[provider] })
 
