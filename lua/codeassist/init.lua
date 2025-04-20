@@ -8,6 +8,31 @@ local pip = vim.fs.joinpath(venv_path, "bin", "pip")
 local provider = "ollama"
 local model = "llama3.2:1b"
 
+local provider_map = {
+	["openai"]                  = "langchain-openai",
+	["anthropic"]               = "langchain-anthropic",
+	["azure_openai"]            = "langchain-openai",
+	["azure_ai"]                = "langchain-azure-ai",
+	["google_vertexai"]         = "langchain-google-vertexai",
+	["google_genai"]            = "langchain-google-genai",
+	["bedrock"]                 = "langchain-aws",
+	["bedrock_converse"]        = "langchain-aws",
+	["cohere"]                  = "langchain-cohere",
+	["fireworks"]               = "langchain-fireworks",
+	["together"]                = "langchain-together",
+	["mistralai"]               = "langchain-mistralai",
+	["huggingface"]             = "langchain-huggingface",
+	["groq"]                    = "langchain-groq",
+	["ollama"]                  = "langchain-ollama",
+	["google_anthropic_vertex"] = "langchain-google-vertexai",
+	["deepseek"]                = "langchain-deepseek",
+	["ibm"]                     = "langchain-ibm",
+	["nvidia"]                  = "langchain-nvidia-ai-endpoints",
+	["xai"]                     = "langchain-xai",
+	["perplexity"]              = "langchain-perplexity",
+}
+
+
 local notify = function(message)
 	local has_noice, noice = pcall(require, "noice")
 	if (has_noice) then
@@ -85,7 +110,7 @@ M.setup = function(opts)
 	end
 
 	vim.system({ "python", "-m", "venv", venv_path })
-	vim.system({ pip, "install", "langchain", "langchain-" .. provider })
+	vim.system({ pip, "install", "langchain", provider_map[provider] })
 
 	vim.api.nvim_create_user_command("CodeAssist", code_assist_ask, { range = true, desc = "" })
 	vim.api.nvim_create_user_command("CodeAssistReplace", code_assist_replace, { range = true, desc = "" })
