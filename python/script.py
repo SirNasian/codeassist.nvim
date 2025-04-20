@@ -19,7 +19,7 @@ try:
     model = init_chat_model(model, model_provider=provider)
     prompt = ChatPromptTemplate.from_messages([
         ("system", system_prompt[mode]),
-        ("system", "```{language}\n{context}```"),
+        ("user", "```{language}\n{context}```"),
         ("user", "{query}"),
     ])
 
